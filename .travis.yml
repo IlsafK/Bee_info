@@ -1,9 +1,8 @@
-os: windows
-dist: focal
+
 language: python
 
 python:
-  - 3.9
+  - 3.9.1
 
 install:
   - sudo apt -y install python3-distutils
