@@ -4,7 +4,7 @@
 title = Bee Info
 
 # (str) Package name
-package.name = mortgagecalculator
+package.name = beeinfo
 
 # (str) Package domain (needed for android/ios packaging)
 package.domain = org.wiseplat
