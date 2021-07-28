@@ -6,6 +6,8 @@ from kivymd.app import MDApp
 from kivymd.theming import ThemableBehavior
 from kivymd.uix.list import OneLineIconListItem, MDList
 
+from kivymd.uix.card import MDCardSwipe
+
 from kivymd.uix.list import OneLineListItem
 
 from kivymd.uix.tab import MDTabsBase
@@ -24,6 +26,8 @@ import datetime
 
 from kivymd.uix.label import MDLabel
 from kivy.uix.label import Label
+
+import re
 
 KV = '''
 #https://stackoverflow.com/questions/65698145/kivymd-tab-name-containing-icons-and-text
@@ -75,8 +79,25 @@ KV = '''
 
         DrawerList:
             id: md_list
+            
+<SwipeToDeleteItem>:
+    size_hint_y: None
+    height: content.height
 
+    MDCardSwipeLayerBox:
+        padding: "8dp"
 
+        MDIconButton:
+            icon: "trash-can"
+            pos_hint: {"center_y": .5}
+            on_release: app.remove_item(root, root.text)
+
+    MDCardSwipeFrontBox:
+        OneLineListItem:
+            id: content
+            text: root.text
+            _no_ripple_effect: True
+            on_release: app.data_read(root.text)
 
 Screen:
 
@@ -111,7 +132,12 @@ Screen:
                             BoxLayout:
                                 orientation: 'vertical'
                                 padding: "10dp"
-                                
+                                BoxLayout:
+                                    size_hint: (1, .05)
+                                    MDLabel:
+                                        id: beehive_list
+                                        text: "Сайлагыз оя"
+                                        halign: "center"
                                 BoxLayout:
                                     GridLayout:
                                         padding: 10
@@ -120,74 +146,158 @@ Screen:
                                         BoxLayout:
                                             orientation: 'vertical'
                                             MDLabel:
-                                                size_hint: (1, .15)
+                                                size_hint: (1, .25)
                                                 text: " Әнкә корт:"
                                                 halign: "left"
                                                 theme_text_color: "Custom"
                                                 text_color: 1, 0, 0, 1
                                             Button:
                                                 id: buttons1
+                                                size_hint: (1, .75)
                                                 on_press: app.choice(1)
                                                 background_color: (1, 1, 0, 1)
                                         BoxLayout:
                                             orientation: 'vertical'
                                             MDLabel:
-                                                size_hint: (1, .15)
+                                                size_hint: (1, .25)
                                                 text: " Канаты:"
                                                 halign: "left"
                                                 theme_text_color: "Custom"
                                                 text_color: 1, 0, 0, 1
                                             Button:
                                                 id: buttons2
+                                                size_hint: (1, .75)
                                                 on_press: app.choice(2)
                                                 background_color: (1, 1, 0, 1)
                                         BoxLayout:
                                             orientation: 'vertical'
                                             MDLabel:
-                                                size_hint: (1, .15)
+                                                size_hint: (1, .25)
                                                 text: " Әнкәнең елы:"
                                                 halign: "left"
                                                 theme_text_color: "Custom"
                                                 text_color: 1, 0, 0, 1
                                             Button:
                                                 id: buttons3
+                                                size_hint: (1, .75)
                                                 on_press: app.choice(3)
                                                 background_color: (1, 1, 0, 1)
                                         BoxLayout:
                                             orientation: 'vertical'
                                             MDLabel:
-                                                size_hint: (1, .15)
+                                                size_hint: (1, .25)
                                                 text: " Кая:"
                                                 halign: "left"
                                                 theme_text_color: "Custom"
                                                 text_color: 1, 0, 0, 1
                                             Button:
                                                 id: buttons4
+                                                size_hint: (1, .75)
                                                 on_press: app.choice(4)
                                                 background_color: (1, 1, 0, 1)
                                         BoxLayout:
                                             orientation: 'vertical'
                                             MDLabel:
-                                                size_hint: (1, .15)
+                                                size_hint: (1, .25)
                                                 text: " Сетка:"
                                                 halign: "left"
                                                 theme_text_color: "Custom"
                                                 text_color: 1, 0, 0, 1
                                             Button:
                                                 id: buttons5
+                                                size_hint: (1, .75)
                                                 on_press: app.choice(5)
                                                 background_color: (1, 1, 0, 1)
                                         BoxLayout:
                                             orientation: 'vertical'
                                             MDLabel:
-                                                size_hint: (1, .15)
+                                                size_hint: (1, .25)
                                                 text: " Корпус:"
                                                 halign: "left"
                                                 theme_text_color: "Custom"
                                                 text_color: 1, 0, 0, 1
                                             Button:
                                                 id: buttons6
+                                                size_hint: (1, .75)
                                                 on_press: app.choice(6)
+                                                background_color: (1, 1, 0, 1)
+                                        BoxLayout:
+                                            orientation: 'vertical'
+                                            MDLabel:
+                                                size_hint: (1, .25)
+                                                text: "Әнкә клеткада:"
+                                                halign: "left"
+                                                theme_text_color: "Custom"
+                                                text_color: 1, 0, 0, 1
+                                            Button:
+                                                id: buttons7
+                                                size_hint: (1, .75)
+                                                on_press: app.choice(7)
+                                                background_color: (1, 1, 0, 1)
+                                        BoxLayout:
+                                            orientation: 'vertical'
+                                            MDLabel:
+                                                size_hint: (1, .25)
+                                                text: "Тәрбиәҗе гаилә:"
+                                                halign: "left"
+                                                theme_text_color: "Custom"
+                                                text_color: 1, 0, 0, 1
+                                            Button:
+                                                id: buttons8
+                                                size_hint: (1, .75)
+                                                on_press: app.choice(8)
+                                                background_color: (1, 1, 0, 1)
+                                        BoxLayout:
+                                            orientation: 'vertical'
+                                            MDLabel:
+                                                size_hint: (1, .25)
+                                                text: "Аеру:"
+                                                halign: "left"
+                                                theme_text_color: "Custom"
+                                                text_color: 1, 0, 0, 1
+                                            Button:
+                                                id: buttons9
+                                                size_hint: (1, .75)
+                                                on_press: app.choice(9)
+                                                background_color: (1, 1, 0, 1)
+                                        BoxLayout:
+                                            orientation: 'vertical'
+                                            MDLabel:
+                                                size_hint: (1, .25)
+                                                text: "Ревезия:"
+                                                halign: "left"
+                                                theme_text_color: "Custom"
+                                                text_color: 1, 0, 0, 1
+                                            Button:
+                                                id: buttons10
+                                                size_hint: (1, .75)
+                                                on_press: app.choice(10)
+                                                background_color: (1, 1, 0, 1)
+                                        BoxLayout:
+                                            orientation: 'vertical'
+                                            MDLabel:
+                                                size_hint: (1, .25)
+                                                text: "Рам:"
+                                                halign: "left"
+                                                theme_text_color: "Custom"
+                                                text_color: 1, 0, 0, 1
+                                            Button:
+                                                id: buttons11
+                                                size_hint: (1, .75)
+                                                on_press: app.choice(11)
+                                                background_color: (1, 1, 0, 1)
+                                        BoxLayout:
+                                            orientation: 'vertical'
+                                            MDLabel:
+                                                size_hint: (1, .25)
+                                                text: "Отводок:"
+                                                halign: "left"
+                                                theme_text_color: "Custom"
+                                                text_color: 1, 0, 0, 1
+                                            Button:
+                                                id: buttons12
+                                                size_hint: (1, .75)
+                                                on_press: app.choice(12)
                                                 background_color: (1, 1, 0, 1)
                                 BoxLayout:
                                     size_hint: (1, .15)
@@ -200,56 +310,59 @@ Screen:
                                         size_hint: (.8, 1)
                                         Button:
                                             id: button_confirm
-                                            font_size: 40
+                                            font_size: 35
                                             background_normal: ''
                                             background_color: (1, 0, 0, 1)
                                             text: 'Подтвердить'
                                             on_release: app.confirm()
                                         Button:
                                             id: button_delet
-                                            font_size: 40
+                                            font_size: 35
                                             background_normal: ''
                                             background_color: (0, 0, 1, 1)
                                             text: 'Удалить'
                                             on_release: app.delet()
+                                        Button:
+                                            id: button_add
+                                            font_size: 35
+                                            background_normal: ''
+                                            background_color: (0, 1, 0, 1)
+                                            text: 'Добавить'
+                                            on_release: app.list_add()
                                             
                                 BoxLayout:
                                     ScrollView:
                                 
                                         MDList:
-                                    
-                                            OneLineAvatarIconListItem:
-                                                on_release: app.data_read()
-                                                text: 'A1'
-                                    
-                                                IconLeftWidget:
-                                                    icon: "beehive-outline"
-                                    
-                                            OneLineAvatarIconListItem:
-                                                on_release: print("Click 2!")
-                                                text: 'A2'
-                                    
-                                                IconLeftWidget:
-                                                    icon: "beehive-outline"
+                                            id: md_list
+                                            padding: 0
                         
                         Tab:
                             id: tab2
                             name: 'tab2'
                             text: f"[size=20][font={fonts[-1]['fn_regular']}]{md_icons['bee']}[/size][/font] Бал"
+                            on_size: app.output_data()
                             BoxLayout:
                                 orientation: 'vertical'
                                 padding: "10dp"
                                 spacing: "10dp"
+                                
+                                canvas:
+                                    Color:
+                                        rgba: 0.1, 1, 1, 1
+                                    Rectangle:
+                                        size: self.size
+                                        pos: self.pos
                                 BoxLayout:
                                     orientation: 'horizontal'
                                     size_hint: (1, 0.15)
                                     MDLabel:
-                                        size_hint: (0.10, 1)
+                                        size_hint: (0.15, 1)
                                         text: "Банка саны: "
                                         halign: "left"
                                     MDSlider:
                                         id: slider
-                                        size_hint: (0.75, 1)
+                                        size_hint: (0.70, 1)
                                         min: 0
                                         max: 100
                                         value: 1
@@ -267,52 +380,56 @@ Screen:
                                     size_hint: (1, 0.10)
                                     BoxLayout:
                                         MDLabel:
-                                            size_hint: (0.20, 1)
+                                            size_hint: (0.35, 1)
                                             text: "Кая:"
                                             halign: "center"
                                         TextInput:
                                             id: data_input_where
                                             multiline: False
-                                            size_hint: (0.80, 1)
+                                            size_hint: (0.65, 1)
                                     BoxLayout:
                                         MDLabel:
-                                            size_hint: (0.20, 1)
+                                            size_hint: (0.35, 1)
                                             text: "Кайчан:"
                                             halign: "center"
                                         TextInput:
                                             id: data_input_when
                                             multiline: False
-                                            size_hint: (0.80, 1)
+                                            size_hint: (0.65, 1)
                                 BoxLayout:
                                     orientation: 'horizontal'
                                     size_hint: (1, 0.1)
                                     pos_hint: {"center_x": .5}
-                                    MDLabel:
-                                        size_hint: (0.1, 1)
-                                        text: "Бәясе:"
-                                        halign: "center"
-                                    TextInput:
-                                        id: data_input_price
-                                        multiline: False
-                                        size_hint: (0.4, 1)
+                                    BoxLayout:
+                                        size_hint: (.5, 1)
+                                        MDLabel:
+                                            size_hint: (0.35, 1)
+                                            text: "Бәясе:"
+                                            halign: "center"
+                                        TextInput:
+                                            id: data_input_price
+                                            multiline: False
+                                            size_hint: (0.65, 1)
                                     BoxLayout:
                                         size_hint: (.1, 1)
-                                    Button:
-                                        id: add
-                                        text: "Добавить"
-                                        font_size: 40
-                                        size_hint: (0.2, 1)
-                                        background_normal: ''
-                                        background_color: (0, 0, 1, 1)
-                                        on_release: app.add()
-                                    Button:
-                                        id: add
-                                        text: "Удалить"
-                                        font_size: 40
-                                        size_hint: (0.2, 1)
-                                        background_normal: ''
-                                        background_color: (1, 0, 0, 1)
-                                        on_release: app.delet_info_honey()
+                                    BoxLayout:
+                                        size_hint: (.4, 1)
+                                        Button:
+                                            id: add
+                                            text: "Добавить"
+                                            font_size: 40
+                                            size_hint: (0.2, 1)
+                                            background_normal: ''
+                                            background_color: (0, 0, 1, 1)
+                                            on_release: app.add()
+                                        Button:
+                                            id: add
+                                            text: "Удалить"
+                                            font_size: 40
+                                            size_hint: (0.2, 1)
+                                            background_normal: ''
+                                            background_color: (1, 0, 0, 1)
+                                            on_release: app.delet_info_honey()
                                 BoxLayout:
                                     orientation: 'horizontal'
                                     TextInput:
@@ -342,6 +459,9 @@ Screen:
                 id: content_drawer
 '''
 
+class SwipeToDeleteItem(MDCardSwipe):
+    text = StringProperty()
+
 class ContentNavigationDrawer(BoxLayout):
     pass
 
@@ -370,11 +490,40 @@ class beeinfoApp(MDApp):
     by_who = "Капалка"
     nomer_confirm = 0
     nomer = 0
+    list_choice = "Сайлагыз оя"
+
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self.screen = Builder.load_string(KV)
 
     def build(self):
         # self.theme_cls.theme_style = "Light"  # "Dark"  # "Light"
-        return Builder.load_string(KV)
-        #return self.screen
+        #return Builder.load_string(KV)
+        return self.screen
+
+    def remove_item(self, instance, str1):
+        self.screen.ids.md_list.remove_widget(instance)
+        with open('list.txt') as f:
+            lines = f.readlines()
+            print(lines)
+        pattern = re.compile(re.escape(str1))
+        with open('list.txt', 'w') as f:
+            for line in lines:
+                result = pattern.search(line)
+                if result is None:
+                    f.write(line)
+        s = str(str1)
+        s = s.split()
+        s = ''.join(s)
+        with open('data.txt', 'r', -1, 'utf-8') as f:
+            lines = f.readlines()
+            print(lines)
+        pattern = re.compile(re.escape(s))
+        with open('data.txt', 'w', -1, 'utf-8') as f:
+            for line in lines:
+                result = pattern.search(line)
+                if result is None:
+                    f.write(line)
 
     def on_start(self):
         icons_item_menu_lines = {
@@ -393,6 +542,12 @@ class beeinfoApp(MDApp):
         for icon_name in icons_item_menu_lines.keys():
             self.root.ids.content_drawer.ids.md_list.add_widget(
                 ItemDrawer(icon=icon_name, text=icons_item_menu_lines[icon_name])
+            )
+        with open('list.txt', 'r', -1, 'utf-8') as f:
+            lines = f.readlines()
+        for line in lines:
+            self.screen.ids.md_list.add_widget(
+                SwipeToDeleteItem(text=f"{line}")
             )
         # To auto generate tabs
         #for icon_name, name_tab in icons_item_menu_tabs.items():
@@ -421,36 +576,23 @@ class beeinfoApp(MDApp):
         self.nomer_confirm = 1
 
     def data_write_txt(self, id, confirm_data_1):
-        f = open('data.txt', 'r', -1, 'utf-8')
-        f.seek(0)
-        text_read1 = f.readline()
-        text_read2 = f.readline()
-        text_read3 = f.readline()
-        text_read4 = f.readline()
-        text_read5 = f.readline()
-        text_read6 = f.readline()
-        if id == 1:
-            text_read1 = confirm_data_1
-        elif id == 2:
-            text_read2 = confirm_data_1
-        elif id == 3:
-            text_read3 = confirm_data_1
-        elif id == 4:
-            text_read4 = confirm_data_1
-        elif id == 5:
-            text_read5 = confirm_data_1
-        elif id == 6:
-            text_read6 = confirm_data_1
-        f.seek(0)
-        f = open('data.txt', 'w', -1, 'utf-8')
-        f.write(f"{text_read1}")
-        f.write(f"{text_read2}")
-        f.write(f"{text_read3}")
-        f.write(f"{text_read4}")
-        f.write(f"{text_read5}")
-        f.write(f"{text_read6}")
-        print(text_read6)
-        f.close()
+        with open('data.txt', 'r', -1, 'utf-8') as f:
+            lines = f.readlines()
+        with open('data.txt', 'w', -1, 'utf-8') as f:
+            s = str(self.list_choice)
+            s = s.split()
+            s = ''.join(s)
+            for line in lines:
+                if s in line:
+                    sl = line.split()
+                    print(sl)
+                    sl[id] = confirm_data_1
+                    print(sl)
+                    sj = ' '.join(sl)
+                    print(sl)
+                    f.write(f'{sj}\n')
+                if not s in line:
+                    f.write(line)
 
     def choice(self, button_id):
         if self.nomer_confirm == 1:
@@ -475,43 +617,79 @@ class beeinfoApp(MDApp):
             elif button_id == 6:
                 self.root.ids.buttons6.text = confirm_data
                 self.data_write_txt(6, confirm_data)
+            elif button_id == 7:
+                self.root.ids.buttons7.text = confirm_data
+                self.data_write_txt(7, confirm_data)
+            elif button_id == 8:
+                self.root.ids.buttons8.text = confirm_data
+                self.data_write_txt(8, confirm_data)
+            elif button_id == 9:
+                self.root.ids.buttons9.text = confirm_data
+                self.data_write_txt(9, confirm_data)
+            elif button_id == 10:
+                self.root.ids.buttons10.text = confirm_data
+                self.data_write_txt(10, confirm_data)
+            elif button_id == 11:
+                self.root.ids.buttons11.text = confirm_data
+                self.data_write_txt(11, confirm_data)
+            elif button_id == 12:
+                self.root.ids.buttons12.text = confirm_data
+                self.data_write_txt(12, confirm_data)
     def delet(self):
         self.root.ids.data_input.text = ""
 
-    def data_read(self):
-        f = open('data.txt', 'r', -1, 'utf-8')
-        x1 = f.readline()
-        x2 = f.readline()
-        x3 = f.readline()
-        x4 = f.readline()
-        x5 = f.readline()
-        x6 = f.readline()
-        f.close()
-        self.root.ids.buttons1.text = x1
-        self.root.ids.buttons2.text = x2
-        self.root.ids.buttons3.text = x3
-        self.root.ids.buttons4.text = x4
-        self.root.ids.buttons5.text = x5
-        self.root.ids.buttons6.text = x6
+    def data_read(self, button_nomer):
+        self.list_choice = button_nomer
+        self.root.ids.beehive_list.text = button_nomer
+        with open('data.txt', 'r', -1, 'utf-8') as f:
+            lines = f.readlines()
+        s = str(button_nomer)
+        s = s.split()
+        s = ''.join(s)
+        for line in lines:
+            if s in line:
+                sl_split = line.split()
+                print(sl_split)
+        self.root.ids.buttons1.text = sl_split[1]
+        self.root.ids.buttons2.text = sl_split[2]
+        self.root.ids.buttons3.text = sl_split[3]
+        self.root.ids.buttons4.text = sl_split[4]
+        self.root.ids.buttons5.text = sl_split[5]
+        self.root.ids.buttons6.text = sl_split[6]
+        self.root.ids.buttons7.text = sl_split[7]
+        self.root.ids.buttons8.text = sl_split[8]
+        self.root.ids.buttons9.text = sl_split[9]
+        self.root.ids.buttons10.text = sl_split[10]
+        self.root.ids.buttons11.text = sl_split[11]
+        self.root.ids.buttons12.text = sl_split[12]
+
     def add(self):
         where = self.root.ids.data_input_where.text
         when = self.root.ids.data_input_when.text
         price = self.root.ids.data_input_price.text
         can = self.root.ids.number_of_cans.text
-        summa = can*price
+        f = open('sum.txt', 'r', -1, 'utf-8')
+        sums = f.readline()
+        f.close()
+        sum = int(can) * int(price) + int(sums)
+        f = open('sum.txt', 'w', -1, 'utf-8')
+        f.write(str(sum))
+        f.close()
         if not ((where and when and price) == ""):
             self.nomer = self.nomer + 1
             f = open('honey.txt', 'a', -1, 'utf-8')
             f.write(f"{self.nomer}. {where} - {when} - {price}$ - {can} банка\n")
             f.close()
-            f = open('honey.txt', 'r', -1, 'utf-8')
-            self.root.ids.info_add_honey.text = f'{f.readline()}{f.readline()}{f.readline()}{f.readline()}{f.readline()}{f.readline()}{f.readline()}{f.readline()}{f.readline()}{f.readline()}{f.readline()}{f.readline()}{f.readline()}' \
-                                                f'{f.readline()}{f.readline()}{f.readline()}{f.readline()}{f.readline()}{f.readline()}{f.readline()}{f.readline()}{f.readline()}{f.readline()}{f.readline()}{f.readline()}{f.readline()}' \
-                                                f'{f.readline()}{f.readline()}{f.readline()}{f.readline()}{f.readline()}{f.readline()}{f.readline()}{f.readline()}{f.readline()}{f.readline()}{f.readline()}{f.readline()}{f.readline()}' \
-                                                f'{f.readline()}{f.readline()}{f.readline()}{f.readline()}{f.readline()}{f.readline()}{f.readline()}{f.readline()}{f.readline()}{f.readline()}{f.readline()}{f.readline()}{f.readline()}' \
-                                                f'{f.readline()}{f.readline()}{f.readline()}{f.readline()}{f.readline()}{f.readline()}{f.readline()}{f.readline()}{f.readline()}{f.readline()}{f.readline()}{f.readline()}{f.readline()}' \
-                                                f'{f.readline()}{f.readline()}{f.readline()}{f.readline()}{f.readline()}{f.readline()}{f.readline()}{f.readline()}{f.readline()}{f.readline()}{f.readline()}{f.readline()}{f.readline()}'
-            f.close()
+            self.output_data()
+    def output_data(self):
+        f = open('honey.txt', 'r', -1, 'utf-8')
+        self.root.ids.info_add_honey.text = f'{f.readline()}{f.readline()}{f.readline()}{f.readline()}{f.readline()}{f.readline()}{f.readline()}{f.readline()}{f.readline()}{f.readline()}{f.readline()}{f.readline()}{f.readline()}' \
+                                            f'{f.readline()}{f.readline()}{f.readline()}{f.readline()}{f.readline()}{f.readline()}{f.readline()}{f.readline()}{f.readline()}{f.readline()}{f.readline()}{f.readline()}{f.readline()}' \
+                                            f'{f.readline()}{f.readline()}{f.readline()}{f.readline()}{f.readline()}{f.readline()}{f.readline()}{f.readline()}{f.readline()}{f.readline()}{f.readline()}{f.readline()}{f.readline()}' \
+                                            f'{f.readline()}{f.readline()}{f.readline()}{f.readline()}{f.readline()}{f.readline()}{f.readline()}{f.readline()}{f.readline()}{f.readline()}{f.readline()}{f.readline()}{f.readline()}' \
+                                            f'{f.readline()}{f.readline()}{f.readline()}{f.readline()}{f.readline()}{f.readline()}{f.readline()}{f.readline()}{f.readline()}{f.readline()}{f.readline()}{f.readline()}{f.readline()}' \
+                                            f'{f.readline()}{f.readline()}{f.readline()}{f.readline()}{f.readline()}{f.readline()}{f.readline()}{f.readline()}{f.readline()}{f.readline()}{f.readline()}{f.readline()}{f.readline()}'
+        f.close()
     def delet_info_honey(self):
         price = self.root.ids.data_input_price.text
         price = price.upper()
@@ -524,20 +702,55 @@ class beeinfoApp(MDApp):
         text_inputs = self.root.ids.data_input_when.text
         if len(text_inputs) == 2:
             self.root.ids.data_input_when.text = f'{text_inputs}.'
-
+    def list_add(self):
+        error_add = 0
+        initial_data = "Билгесез"
+        if self.nomer_confirm == 1:
+            list_beehive = self.root.ids.data_input.text
+            with open('list.txt', 'r', -1, 'utf-8') as f:
+                lines = f.readlines()
+            for line in lines:
+                if list_beehive in line:
+                    error_add = 1
+            if error_add == 0:
+                f = open('list.txt', 'a', -1, 'utf-8')
+                f.write(f'{list_beehive}\n')
+                f.close()
+                f = open('data.txt', 'a', -1, 'utf-8')
+                f.write(f'{list_beehive}')
+                for i in range(12):
+                    f.write(f' {initial_data}')
+                f.write(f'\n')
+                f.close()
+                self.update_list(list_beehive)
+    def update_list(self, line):
+        if self.nomer_confirm == 1:
+            self.root.ids.button_confirm.background_color = (1, 0, 0, 1)
+            self.nomer_confirm = 0
+        self.screen.ids.md_list.add_widget(
+            SwipeToDeleteItem(text=f"{line}")
+        )
 if __name__ == '__main__':
     try:
-        f = open('data.txt', 'r')
-    except FileNotFoundError:
-        f = open('data.txt', 'w', -1, 'utf-8')
-        for n in range(100):
-            f.write('нет информации\n')
-        f.close()
-    try:
         f = open('honey.txt', 'r')
+        f.close()
     except:
         f = open('honey.txt', 'w', -1, 'utf-8')
         f.write("   Бал саткан турында мәгълүмәт...\n")
+        f.close()
+    try:
+        f = open('sum.txt', 'r')
+        f.close()
+    except:
+        f = open('sum.txt', 'w', -1, 'utf-8')
+        f.write("0")
+        f.close()
+    try:
+        f = open('list.txt', 'r')
+        f.close()
+    except:
+        f = open('list.txt', 'w', -1, 'utf-8')
+        f.write("")
         f.close()
     while True:
         beeinfoApp().run()
